@@ -3,10 +3,10 @@ import { prisma } from "@/lib/db";
 
 export async function GET(
   req: Request,
-  context: { params: { productId: string } } // كائن مباشر لتجنب خطأ Turbopack
+  context: { params: Promise<{ productId: string }> }
 ) {
   try {
-    const { productId } = context.params;
+    const { productId } = await context.params; // 👈 لاحظ await هنا
 
     const product = await prisma.product.findUnique({
       where: { id: productId },
