@@ -25,7 +25,7 @@ async function Page() {
         {/* Logo & title */}
         <div className="flex flex-col items-center justify-center gap-3">
           <Image
-            src="/icons/Logo.png"
+            src="/icons/logo.png"
             alt="logo"
             width={100}
             height={100}
