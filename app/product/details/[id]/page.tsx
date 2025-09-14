@@ -55,20 +55,20 @@ export default async function ProductDetails(props: { params: tParams }) {
     <>
       <Head>
         <title>{product.title} | My Shop</title>
-        <meta name="description" content={product.description} />
+        <meta name="description" content={`${product.description}`} />
         
         {/* Open Graph */}
         <meta property="og:title" content={product.title} />
         <meta property="og:description" content={product.description} />
-        <meta property="og:image" content={product.thumbnails[0]} />
+        <meta property="og:image" content={`${product.thumbnails[0]}`} />
         <meta property="og:type" content="product" />
         <meta property="og:url" content={`https://rivorea-marketplace.vercel.app/product/details/${product.id}`} />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={product.title} />
-        <meta name="twitter:description" content={product.description} />
-        <meta name="twitter:image" content={product.thumbnails[0]} />
+        <meta name="twitter:title" content={`${product.title}`} />
+        <meta name="twitter:description" content={`${product.description}`} />
+        <meta name="twitter:image" content={`${product.thumbnails[0]}`} />
       </Head>
 
       <div className="flex flex-col gap-20">
