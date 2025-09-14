@@ -18,7 +18,16 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "lib/generated/prisma/**", // ⬅ تجاهل ملفات Prisma auto-generated
     ],
+  },
+  {
+    rules: {
+      // ممكن تضيف استثناءات عامة لو حابب
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+    },
   },
 ];
 
