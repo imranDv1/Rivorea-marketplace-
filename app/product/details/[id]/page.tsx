@@ -16,9 +16,49 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-
-
 type tParams = { id: string };
+
+// ✅ Generate SEO metadata
+export async function generateMetadata({ params }: { params: tParams }) {
+  const product = await prisma.product.findUnique({
+    where: { id: params.id },
+  });
+
+  if (!product) {
+    return {
+      title: "Product not found | My Store",
+      description: "This product does not exist.",
+    };
+  }
+
+  const url = `${process.env.NEXT_PUBLIC_APP_URL}/product/details/${product.id}`;
+  const image = product.thumbnails?.[0] || "/default-product.png";
+
+  return {
+    title: product.title,
+    description: product.description,
+    openGraph: {
+      title: product.title,
+      description: product.description,
+      url,
+      type: "product",
+      images: [
+        {
+          url: image,
+          width: 800,
+          height: 600,
+          alt: product.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description: product.description,
+      images: [image],
+    },
+  };
+}
 
 export default async function ProductDetails(props: { params: tParams }) {
   const { id } = props.params;
@@ -26,16 +66,15 @@ export default async function ProductDetails(props: { params: tParams }) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
-    return redirect("/login")
+    return redirect("/login");
   }
 
   const product = await prisma.product.findUnique({
-    where: { id: id },
+    where: { id },
   });
 
   if (!product) return <div>Product not found</div>;
 
-  // 🔎 الكارت الخاص بالمستخدم
   const userCart = await prisma.cart.findUnique({
     where: {
       userId: session.user.id,
@@ -45,7 +84,6 @@ export default async function ProductDetails(props: { params: tParams }) {
     },
   });
 
-  // ✅ تحقق إذا المنتج في الكارت
   const isInCart =
     userCart?.items.some((item) => item.productId === product.id) ?? false;
 
@@ -61,27 +99,29 @@ export default async function ProductDetails(props: { params: tParams }) {
   if (!categoryProjects) return null;
 
   const hasPurchased = await prisma.purchase.findFirst({
-  where: {
-    userId: session.user.id,
-    productId: product.id,
-  },
-});
+    where: {
+      userId: session.user.id,
+      productId: product.id,
+    },
+  });
 
-const isPurchased = Boolean(hasPurchased);
+  const isPurchased = Boolean(hasPurchased);
 
   return (
-    <div className=" flex flex-col gap-20">
-      <div className="w-[90%] mx-auto mt-20 grid grid-cols-1 md:grid-cols-2  items-center gap-20">
-        <div className="flex flex-col  gap-9">
+    <div className="flex flex-col gap-20">
+      <div className="w-[90%] mx-auto mt-20 grid grid-cols-1 md:grid-cols-2 items-center gap-20">
+        <div className="flex flex-col gap-9">
           <h1 className="text-4xl font-bold">{product.title}</h1>
-          <p className="text-2xl text-muted-foreground">
-            {product.description}
-          </p>
+          <p className="text-2xl text-muted-foreground">{product.description}</p>
           <div className="flex items-center gap-7">
             <p className="text-lg ">${product.price}</p>
             <p className="text-lg text-muted-foreground">{product.category}</p>
           </div>
-          <AddToCartButton productId={product.id} state={isInCart} purchased={isPurchased} />
+          <AddToCartButton
+            productId={product.id}
+            state={isInCart}
+            purchased={isPurchased}
+          />
         </div>
         <Carousel className="w-full md:w-[80%] mx-auto">
           <CarouselContent>
@@ -98,8 +138,6 @@ const isPurchased = Boolean(hasPurchased);
               </CarouselItem>
             ))}
           </CarouselContent>
-
-          {/* Hide on small screens, show on md+ */}
           <CarouselPrevious className="hidden md:flex" />
           <CarouselNext className="hidden md:flex" />
         </Carousel>
