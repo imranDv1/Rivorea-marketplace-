@@ -16,57 +16,9 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+
+
 type tParams = { id: string };
-
-// ✅ SEO Metadata لكل منتج
-export async function generateMetadata({ params }: { params: tParams }) {
-  const product = await prisma.product.findUnique({
-    where: { id: params.id },
-  });
-
-  if (!product) {
-    return {
-      title: "Product Not Found | Rivorea Marketplace",
-      description: "The requested product could not be found.",
-    };
-  }
-
-  const url = `https://rivorea-marketplace.vercel.app/product/details/${product.id}`;
-
-  return {
-    title: `${product.title} | Rivorea Marketplace`,
-    description: product.description,
-    openGraph: {
-      title: product.title,
-      description: product.description,
-      url,
-      siteName: "Rivorea Marketplace",
-      images: product.thumbnails?.length
-        ? product.thumbnails.map((img) => ({
-            url: img,
-            width: 800,
-            height: 600,
-            alt: product.title,
-          }))
-        : [
-            {
-              url: "https://rivorea-marketplace.vercel.app/default-thumbnail.png",
-              width: 800,
-              height: 600,
-              alt: "Rivorea Marketplace",
-            },
-          ],
-      locale: "en_US",
-      type: "product",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: product.title,
-      description: product.description,
-      images: [product.thumbnails?.[0]],
-    },
-  };
-}
 
 export default async function ProductDetails(props: { params: tParams }) {
   const { id } = props.params;
@@ -74,7 +26,7 @@ export default async function ProductDetails(props: { params: tParams }) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
-    return redirect("/login");
+    return redirect("/login")
   }
 
   const product = await prisma.product.findUnique({
@@ -109,13 +61,13 @@ export default async function ProductDetails(props: { params: tParams }) {
   if (!categoryProjects) return null;
 
   const hasPurchased = await prisma.purchase.findFirst({
-    where: {
-      userId: session.user.id,
-      productId: product.id,
-    },
-  });
+  where: {
+    userId: session.user.id,
+    productId: product.id,
+  },
+});
 
-  const isPurchased = Boolean(hasPurchased);
+const isPurchased = Boolean(hasPurchased);
 
   return (
     <div className=" flex flex-col gap-20">
@@ -129,11 +81,7 @@ export default async function ProductDetails(props: { params: tParams }) {
             <p className="text-lg ">${product.price}</p>
             <p className="text-lg text-muted-foreground">{product.category}</p>
           </div>
-          <AddToCartButton
-            productId={product.id}
-            state={isInCart}
-            purchased={isPurchased}
-          />
+          <AddToCartButton productId={product.id} state={isInCart} purchased={isPurchased} />
         </div>
         <Carousel className="w-full md:w-[80%] mx-auto">
           <CarouselContent>
