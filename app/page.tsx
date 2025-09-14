@@ -154,7 +154,7 @@ export default async function Home() {
 
       <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
         <h1 className="text-3xl font-bold text-primary">UI Kit</h1>
-        <div className="w-full flex justify-between">
+        <div className="w-full flex flex-col lg:flex-row lg:justify-between">
           <p className="text-lg text-muted-foreground">
            Access a full collection of UI components to build beautiful interfaces.
           </p>
@@ -192,7 +192,7 @@ export default async function Home() {
 
       <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
         <h1 className="text-3xl font-bold text-primary">Icons</h1>
-        <div className="w-full flex justify-between">
+        <div className="w-full flex flex-col lg:flex-row lg:justify-between">
           <p className="text-lg text-muted-foreground">
             Browse over 10,000 unique icons to enhance your apps and designs.
           </p>
