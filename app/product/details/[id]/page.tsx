@@ -29,19 +29,18 @@ export default async function ProductDetails(props: { params: tParams }) {
   }
 
   const product = await prisma.product.findUnique({
-    where: { id },
+    where: { id: id },
   });
 
   if (!product) return <div>Product not found</div>;
 
-  // User cart
   const userCart = await prisma.cart.findUnique({
     where: { userId: session.user.id },
     include: { items: true },
   });
+
   const isInCart = userCart?.items.some((item) => item.productId === product.id) ?? false;
 
-  // Similar products
   const productCategory = product.category;
   const categoryProjects = await prisma.product.findMany({
     where: { category: productCategory, NOT: { id: product.id } },
@@ -52,33 +51,27 @@ export default async function ProductDetails(props: { params: tParams }) {
   });
   const isPurchased = Boolean(hasPurchased);
 
-  // Absolute URL for sharing
-  const productUrl = `https://rivorea-marketplace.vercel.app/product/details/${product.id}`;
-  const productImage = product.thumbnails[0];
-
   return (
     <>
-      {/* SEO & Social Sharing */}
       <Head>
-        <title>{product.title} | Rivorea Marketplace</title>
+        <title>{product.title} | My Shop</title>
         <meta name="description" content={product.description} />
-
+        
         {/* Open Graph */}
         <meta property="og:title" content={product.title} />
         <meta property="og:description" content={product.description} />
-        <meta property="og:image" content={productImage} />
+        <meta property="og:image" content={product.thumbnails[0]} />
         <meta property="og:type" content="product" />
-        <meta property="og:url" content={productUrl} />
+        <meta property="og:url" content={`https://rivorea-marketplace.vercel.app/product/details/${product.id}`} />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={product.title} />
         <meta name="twitter:description" content={product.description} />
-        <meta name="twitter:image" content={productImage} />
+        <meta name="twitter:image" content={product.thumbnails[0]} />
       </Head>
 
       <div className="flex flex-col gap-20">
-        {/* Product Info */}
         <div className="w-[90%] mx-auto mt-20 grid grid-cols-1 md:grid-cols-2 items-center gap-20">
           <div className="flex flex-col gap-9">
             <h1 className="text-4xl font-bold">{product.title}</h1>
@@ -87,46 +80,8 @@ export default async function ProductDetails(props: { params: tParams }) {
               <p className="text-lg">${product.price}</p>
               <p className="text-lg text-muted-foreground">{product.category}</p>
             </div>
-
-            {/* Add to Cart */}
             <AddToCartButton productId={product.id} state={isInCart} purchased={isPurchased} />
-
-            {/* Share Buttons */}
-            <div className="flex gap-4 mt-4">
-              {/* WhatsApp */}
-              <a
-                href={`https://api.whatsapp.com/send?text=Check out this product: ${productUrl}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-green-500 px-4 py-2 rounded text-white hover:bg-green-600 transition"
-              >
-                WhatsApp
-              </a>
-
-              {/* X / Twitter */}
-              <a
-                href={`https://twitter.com/intent/tweet?url=${productUrl}&text=Check out this product!`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-600 transition"
-              >
-                X
-              </a>
-
-              {/* Discord */}
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(productUrl);
-                  alert("Product link copied! Share it on Discord.");
-                }}
-                className="bg-indigo-500 px-4 py-2 rounded text-white hover:bg-indigo-600 transition"
-              >
-                Discord
-              </button>
-            </div>
           </div>
-
-          {/* Carousel */}
           <Carousel className="w-full md:w-[80%] mx-auto">
             <CarouselContent>
               {product.thumbnails.map((thumb, i) => (
@@ -142,7 +97,6 @@ export default async function ProductDetails(props: { params: tParams }) {
           </Carousel>
         </div>
 
-        {/* Similar Products */}
         <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
           <h1 className="text-3xl font-bold text-primary">Similar Products</h1>
           <p className="text-lg text-muted-foreground">
