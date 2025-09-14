@@ -20,8 +20,11 @@ interface Props {
     id: string;
   };
 }
+type tParams = Promise<{ id: string }>;
 
-export default async function MyProductDetails({ params }: Props) {
+export default async function MyProductDetails(props: { params: tParams }) {
+    const { id } = await props.params;
+
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
@@ -29,7 +32,7 @@ export default async function MyProductDetails({ params }: Props) {
   }
 
   const product = await prisma.product.findUnique({
-    where: { id: params.id },
+    where: { id: id },
   });
 
   if (!product) {
