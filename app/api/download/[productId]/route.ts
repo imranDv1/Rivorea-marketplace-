@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-type tParams = { id: string };
-
 export async function GET(
-  req: Request, 
-   { params }: { params: tParams }  // الآن كائن مباشر
+  req: Request,
+  context: { params: { productId: string } } // كائن مباشر لتجنب خطأ Turbopack
 ) {
   try {
-     const { id: productId } = params;
+    const { productId } = context.params;
 
     const product = await prisma.product.findUnique({
       where: { id: productId },
