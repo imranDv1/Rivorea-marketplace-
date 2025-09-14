@@ -46,6 +46,7 @@ export default function RootLayout({
             <NavBar />
             <div className="flex-grow flex-1">{children}</div>
             <Toaster />
+             <Analytics />
           </main>
         </ThemeProvider>
       </body>
