@@ -37,7 +37,8 @@ export function UserDropdown({ email, name, image, admin }: iAppProps) {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/"); // redirect to login page
+          window.location.reload()
+          router.push("/"); 
           toast.success("Signout Successfuly");
         },
         onError: () => {
@@ -66,13 +67,13 @@ export function UserDropdown({ email, name, image, admin }: iAppProps) {
 
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/">
+          <Link href="/ui-kit">
             <CircuitBoard className="mr-2 h-4 w-4" />
             <span>Ui kit</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/pricing">
+          <Link href="/icons">
             <FileImage className="mr-2 h-4 w-4" />
             <span>Icons</span>
           </Link>
