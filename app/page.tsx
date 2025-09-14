@@ -1,103 +1,221 @@
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import { Button, buttonVariants } from "@/components/ui/button";
+
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { prisma } from "@/lib/db";
+
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
+import { ArrowDownToLine, ArrowUpRight, ArrowUpRightSquare, CheckCircle, Leaf } from "lucide-react";
 
-export default function Home() {
+const perks = [
+  {
+    name: "Instant Delivery",
+    Icon: ArrowDownToLine,
+    description:
+      "Get your assets delivered to your email in seconds and download them right away.",
+  },
+  {
+    name: "Guaranteed Quality",
+    Icon: CheckCircle,
+    description:
+      "Every asset on our platform is verified by our team to ensure our highest quality standards. Not happy? We offer a 30-day refund guarantee.",
+  },
+  {
+    name: "For the Planet",
+    Icon: Leaf,
+    description:
+      "We've pledged 1% of sales to the preservation and restoration of the natural environment.",
+  },
+];
+
+export default async function Home() {
+  const newProducts = await prisma.product.findMany({
+    orderBy: {
+      createdAt: "desc", // or 'updatedAt' depending on your schema
+    },
+    take: 4, // limit to 4 products
+  });
+
+  const UiKit = await prisma.product.findMany({
+    where: {
+      category: "ui-kit",
+    },
+  });
+
+  const Icons = await prisma.product.findMany({
+    where: {
+      category: "icons",
+    },
+    orderBy: {
+      createdAt: "asc", // أقدم المنتجات أولاً
+    },
+    take: 4, // اختر أول 4 منتجات
+  });
+
+  if (!Icons) return null;
+  if (!UiKit) return null;
+  if (!newProducts) return null;
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <>
+      <MaxWidthWrapper>
+        <div className="py-20 mx-auto text-center flex flex-col items-center max-w-3xl">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+            Your marketplace for high-quality{" "}
+            <span className="text-primary">digital assets</span>.
+          </h1>
+          <p className="mt-6 text-lg max-w-prose text-muted-foreground">
+            Welcome to Rivorea. Every asset on our platform is verified by our
+            team to ensure our highest quality standards.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
+            <Link href="/products" className={buttonVariants()}>
+              Browse Trending
+            </Link>
+            <Button variant="secondary">Our quality promise &rarr;</Button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* products cards hrere */}
+      </MaxWidthWrapper>
+
+      <section className="border  mb-10 ">
+        <MaxWidthWrapper className="py-20">
+          <div className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-0">
+            {perks.map((perk) => (
+              <div
+                key={perk.name}
+                className="text-center md:flex md:items-start md:text-left lg:block lg:text-center"
+              >
+                <div className="md:flex-shrink-0 flex justify-center">
+                  <div className="h-16 w-16 flex items-center justify-center rounded-full bg-primary/20 border text-primary">
+                    {<perk.Icon className="w-1/3 h-1/3" />}
+                  </div>
+                </div>
+
+                <div className="mt-6 md:ml-4 md:mt-0 lg:ml-0 lg:mt-6">
+                  <h3 className="text-base font-medium ">{perk.name}</h3>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {perk.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </MaxWidthWrapper>
+      </section>
+
+      <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
+        <h1 className="text-3xl font-bold">Brand New</h1>
+        <p className="text-lg text-muted-foreground">
+          explore more than +10,000 icons and UI kit fresh from here
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 justify-start">
+          {newProducts.map((product) => (
+            <Link href={`/product/details/${product.id}`} key={product.id}>
+              <Card className="w-full md:w-[320px] bg-transparent border-0 p-0">
+                <CardHeader className="p-0">
+                  <div className="w-full h-[250px] overflow-hidden rounded-2xl">
+                    <Image
+                      src={product.thumbnails[0]}
+                      alt={product.title}
+                      width={400}
+                      height={250}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0 flex flex-col gap-2">
+                  <h1 className="text-2xl font-bold">{product.title}</h1>
+                  <p className="text-muted-foreground text-lg line-clamp-2">
+                    {product.description}
+                  </p>
+                  <p className="font-bold">${product.price}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
+        <h1 className="text-3xl font-bold">UI Kit</h1>
+        <div className="w-full flex justify-between"> 
+          <p className="text-lg text-muted-foreground">
+            explore more than +10,000 icons and UI kit fresh from here
+          </p>
+          <Link href='/ui-kit' className="text-primary">
+           brows more Ui-kit &rarr;
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 justify-start">
+          {UiKit.map((product) => (
+            <Link href={`/product/details/${product.id}`} key={product.id}>
+              <Card className="w-full md:w-[320px] bg-transparent border-0 p-0">
+                <CardHeader className="p-0">
+                  <div className="w-full h-[250px] overflow-hidden rounded-2xl">
+                    <Image
+                      src={product.thumbnails[0]}
+                      alt={product.title}
+                      width={400}
+                      height={250}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0 flex flex-col gap-2">
+                  <h1 className="text-2xl font-bold">{product.title}</h1>
+                  <p className="text-muted-foreground text-lg line-clamp-2">
+                    {product.description}
+                  </p>
+                  <p className="font-bold">${product.price}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
+        <h1 className="text-3xl font-bold">Icons</h1>
+        <div className="w-full flex justify-between"> 
+          <p className="text-lg text-muted-foreground">
+            explore more than +10,000 icons and UI kit fresh from here
+          </p>
+          <Link href='/icons' className="text-primary">
+           brows more icons &rarr;
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 justify-start">
+          {Icons.map((product) => (
+            <Link href={`/product/details/${product.id}`} key={product.id}>
+              <Card className="w-full md:w-[320px] bg-transparent border-0 p-0">
+                <CardHeader className="p-0">
+                  <div className="w-full h-[250px] overflow-hidden rounded-2xl">
+                    <Image
+                      src={product.thumbnails[0]}
+                      alt={product.title}
+                      width={400}
+                      height={250}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0 flex flex-col gap-2">
+                  <h1 className="text-2xl font-bold">{product.title}</h1>
+                  <p className="text-muted-foreground text-lg line-clamp-2">
+                    {product.description}
+                  </p>
+                  <p className="font-bold">${product.price}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
