@@ -8,7 +8,15 @@ import { prisma } from "@/lib/db";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
-import { ArrowDownToLine, ArrowUpRight, ArrowUpRightSquare, CheckCircle, Leaf } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowUpRight,
+  ArrowUpRightSquare,
+  CheckCircle,
+  Leaf,
+} from "lucide-react";
+import FooterSection from "@/components/footer";
+import { Separator } from "@/components/ui/separator";
 
 const perks = [
   {
@@ -72,10 +80,13 @@ export default async function Home() {
             team to ensure our highest quality standards.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mt-6">
-            <Link href="/products" className={buttonVariants()}>
-              Browse Trending
+            <Link href="/icons" className={buttonVariants()}>
+              Find your broducts
             </Link>
-            <Button variant="secondary">Our quality promise &rarr;</Button>
+           
+            <Link href="https://imran-iota.vercel.app" className={buttonVariants({variant:"secondary"})}>
+              The market owwner &rarr;
+            </Link>
           </div>
         </div>
 
@@ -143,12 +154,12 @@ export default async function Home() {
 
       <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
         <h1 className="text-3xl font-bold">UI Kit</h1>
-        <div className="w-full flex justify-between"> 
+        <div className="w-full flex justify-between">
           <p className="text-lg text-muted-foreground">
             explore more than +10,000 icons and UI kit fresh from here
           </p>
-          <Link href='/ui-kit' className="text-primary">
-           brows more Ui-kit &rarr;
+          <Link href="/ui-kit" className="text-primary">
+            brows more Ui-kit &rarr;
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 justify-start">
@@ -181,12 +192,12 @@ export default async function Home() {
 
       <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
         <h1 className="text-3xl font-bold">Icons</h1>
-        <div className="w-full flex justify-between"> 
+        <div className="w-full flex justify-between">
           <p className="text-lg text-muted-foreground">
             explore more than +10,000 icons and UI kit fresh from here
           </p>
-          <Link href='/icons' className="text-primary">
-           brows more icons &rarr;
+          <Link href="/icons" className="text-primary">
+            brows more icons &rarr;
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 justify-start">
@@ -216,6 +227,10 @@ export default async function Home() {
           ))}
         </div>
       </div>
+
+      <Separator/>
+
+      <FooterSection/>
     </>
   );
 }

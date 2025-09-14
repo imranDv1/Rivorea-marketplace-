@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import AddToCartButton from "@/components/AddToCartButton";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 
 
@@ -25,7 +26,7 @@ export default async function ProductDetails(props: { params: tParams }) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
-    return null;
+    return redirect("/login")
   }
 
   const product = await prisma.product.findUnique({

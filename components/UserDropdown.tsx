@@ -1,5 +1,5 @@
 // components/UserDropdown.tsx
-"use client"
+"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,10 +27,12 @@ interface iAppProps {
   name: string;
   email: string;
   image: string;
+  admin: boolean;
 }
 
-export function UserDropdown({ email, name, image }: iAppProps) {
+export function UserDropdown({ email, name, image, admin }: iAppProps) {
   const router = useRouter();
+
   async function SignOut() {
     await authClient.signOut({
       fetchOptions: {
@@ -81,6 +83,14 @@ export function UserDropdown({ email, name, image }: iAppProps) {
             <span>Purchase</span>
           </Link>
         </DropdownMenuItem>
+        {admin ? (
+          <DropdownMenuItem asChild>
+            <Link href="/dashbourd">
+              <User className="mr-2 h-4 w-4" />
+              <span>Dahboard</span>
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={SignOut}>
           <LogOut className="mr-2 h-4 w-4" />

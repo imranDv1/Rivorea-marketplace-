@@ -66,7 +66,7 @@ export default async function NavBar() {
         {/* Right section (client component) */}
         <div className="flex items-center gap-3">
           <CartShett />
-          <ClientNavActions />
+          <ClientNavActions admin={roles?.admin as boolean} />
         </div>
       </header>
     </div>
