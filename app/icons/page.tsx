@@ -13,9 +13,9 @@ const page = async () => {
   });
   return (
     <div className="w-[90%]  flex flex-col gap-5 mx-auto pb-20">
-      <h1 className="text-3xl font-bold">Icons</h1>
+      <h1 className="text-3xl font-bold text-primary">Icons</h1>
       <p className="text-lg text-muted-foreground">
-        explore more than +10,000 icons and UI kit fresh from here
+        Browse over 10,000 unique icons to enhance your apps and designs.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5 justify-start">
         {products.map((product) => (

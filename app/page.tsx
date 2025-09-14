@@ -120,9 +120,9 @@ export default async function Home() {
       </section>
 
       <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
-        <h1 className="text-3xl font-bold">Brand New</h1>
+        <h1 className="text-3xl font-bold text-primary">Brand New</h1>
         <p className="text-lg text-muted-foreground">
-          explore more than +10,000 icons and UI kit fresh from here
+          Discover the latest icons and UI kits, updated regularly for your projects.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 justify-start">
           {newProducts.map((product) => (
@@ -153,10 +153,10 @@ export default async function Home() {
       </div>
 
       <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
-        <h1 className="text-3xl font-bold">UI Kit</h1>
+        <h1 className="text-3xl font-bold text-primary">UI Kit</h1>
         <div className="w-full flex justify-between">
           <p className="text-lg text-muted-foreground">
-            explore more than +10,000 icons and UI kit fresh from here
+           Access a full collection of UI components to build beautiful interfaces.
           </p>
           <Link href="/ui-kit" className="text-primary">
             brows more Ui-kit &rarr;
@@ -191,10 +191,10 @@ export default async function Home() {
       </div>
 
       <div className="w-[90%] flex flex-col gap-5 mx-auto pb-20">
-        <h1 className="text-3xl font-bold">Icons</h1>
+        <h1 className="text-3xl font-bold text-primary">Icons</h1>
         <div className="w-full flex justify-between">
           <p className="text-lg text-muted-foreground">
-            explore more than +10,000 icons and UI kit fresh from here
+            Browse over 10,000 unique icons to enhance your apps and designs.
           </p>
           <Link href="/icons" className="text-primary">
             brows more icons &rarr;
