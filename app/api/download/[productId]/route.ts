@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-type tParams = Promise<{ id: string }>;
+type tParams = { id: string };
 
 export async function GET(
   req: Request, 
- props: { params: tParams }
+   { params }: { params: tParams }  // الآن كائن مباشر
 ) {
   try {
-    const productId = (await props.params).id
+     const { id: productId } = params;
 
     const product = await prisma.product.findUnique({
       where: { id: productId },

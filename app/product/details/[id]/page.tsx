@@ -15,16 +15,12 @@ import AddToCartButton from "@/components/AddToCartButton";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
 
-type tParams = Promise<{ id: string }>;
+
+type tParams = { id: string };
 
 export default async function ProductDetails(props: { params: tParams }) {
-    const { id } = await props.params;
+  const { id } = props.params;
 
   const session = await auth.api.getSession({ headers: await headers() });
 

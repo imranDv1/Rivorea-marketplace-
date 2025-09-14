@@ -20,10 +20,11 @@ interface Props {
     id: string;
   };
 }
-type tParams = Promise<{ id: string }>;
+
+type tParams = { id: string };
 
 export default async function MyProductDetails(props: { params: tParams }) {
-    const { id } = await props.params;
+     const { id } = props.params;
 
   const session = await auth.api.getSession({ headers: await headers() });
 
