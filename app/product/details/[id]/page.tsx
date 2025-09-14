@@ -15,39 +15,7 @@ import AddToCartButton from "@/components/AddToCartButton";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Metadata } from "next";
-import { Suspense } from "react";
-
-// --- SEO & Social Meta Helper ---
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ProductMeta({ product }: { product: any }) {
-  // You may want to improve the fallback image URL!
-  const image = product.thumbnails && product.thumbnails.length > 0 ? product.thumbnails[0] : "/default-og.png";
-  const url = `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://yourdomain.com"}/product/details/${product.id}`;
-  return (
-    <>
-      {/* SEO */}
-      <title>{product.title} | Product Details</title>
-      <meta name="description" content={product.description} />
-      <meta name="keywords" content={`${product.title},${product.category},ecommerce,product`} />
-      <link rel="canonical" href={url} />
-
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content="product" />
-      <meta property="og:title" content={product.title} />
-      <meta property="og:description" content={product.description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:url" content={url} />
-
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={product.title} />
-      <meta name="twitter:description" content={product.description} />
-      <meta name="twitter:image" content={image} />
-      <meta name="twitter:url" content={url} />
-    </>
-  );
-}
+import Head from "next/head";
 
 type tParams = { id: string };
 
@@ -57,7 +25,7 @@ export default async function ProductDetails(props: { params: tParams }) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
-    return redirect("/login")
+    return redirect("/login");
   }
 
   const product = await prisma.product.findUnique({
@@ -66,57 +34,50 @@ export default async function ProductDetails(props: { params: tParams }) {
 
   if (!product) return <div>Product not found</div>;
 
-  // 🔎 الكارت الخاص بالمستخدم
   const userCart = await prisma.cart.findUnique({
-    where: {
-      userId: session.user.id,
-    },
-    include: {
-      items: true,
-    },
+    where: { userId: session.user.id },
+    include: { items: true },
   });
 
-  // ✅ تحقق إذا المنتج في الكارت
-  const isInCart =
-    userCart?.items.some((item) => item.productId === product.id) ?? false;
+  const isInCart = userCart?.items.some((item) => item.productId === product.id) ?? false;
 
   const productCategory = product.category;
-
   const categoryProjects = await prisma.product.findMany({
-    where: {
-      category: productCategory,
-      NOT: { id: product.id },
-    },
+    where: { category: productCategory, NOT: { id: product.id } },
   });
-
-  if (!categoryProjects) return null;
 
   const hasPurchased = await prisma.purchase.findFirst({
-    where: {
-      userId: session.user.id,
-      productId: product.id,
-    },
+    where: { userId: session.user.id, productId: product.id },
   });
-
   const isPurchased = Boolean(hasPurchased);
 
-  // --- Add SEO & Social Meta ---
-  // You can use next/head or do it this way in app directory:
   return (
     <>
-      {/* SEO & Social meta tags for this product */}
-      <Suspense fallback={null}>
-        <ProductMeta product={product} />
-      </Suspense>
-      <div className=" flex flex-col gap-20">
-        <div className="w-[90%] mx-auto mt-20 grid grid-cols-1 md:grid-cols-2  items-center gap-20">
-          <div className="flex flex-col  gap-9">
+      <Head>
+        <title>{product.title} | My Shop</title>
+        <meta name="description" content={product.description} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:image" content={product.thumbnails[0]} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={`https://yourwebsite.com/product/details/${product.id}`} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product.title} />
+        <meta name="twitter:description" content={product.description} />
+        <meta name="twitter:image" content={product.thumbnails[0]} />
+      </Head>
+
+      <div className="flex flex-col gap-20">
+        <div className="w-[90%] mx-auto mt-20 grid grid-cols-1 md:grid-cols-2 items-center gap-20">
+          <div className="flex flex-col gap-9">
             <h1 className="text-4xl font-bold">{product.title}</h1>
-            <p className="text-2xl text-muted-foreground">
-              {product.description}
-            </p>
+            <p className="text-2xl text-muted-foreground">{product.description}</p>
             <div className="flex items-center gap-7">
-              <p className="text-lg ">${product.price}</p>
+              <p className="text-lg">${product.price}</p>
               <p className="text-lg text-muted-foreground">{product.category}</p>
             </div>
             <AddToCartButton productId={product.id} state={isInCart} purchased={isPurchased} />
@@ -126,18 +87,11 @@ export default async function ProductDetails(props: { params: tParams }) {
               {product.thumbnails.map((thumb, i) => (
                 <CarouselItem key={i}>
                   <div className="w-full h-64 sm:h-72 md:h-80 relative rounded-md overflow-hidden">
-                    <Image
-                      src={thumb}
-                      alt={`Thumbnail ${i + 1}`}
-                      fill
-                      className="object-cover"
-                    />
+                    <Image src={thumb} alt={`Thumbnail ${i + 1}`} fill className="object-cover" />
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-
-            {/* Hide on small screens, show on md+ */}
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />
           </Carousel>
@@ -165,9 +119,7 @@ export default async function ProductDetails(props: { params: tParams }) {
                   </CardHeader>
                   <CardContent className="p-0 flex flex-col gap-2">
                     <h1 className="text-2xl font-bold">{product.title}</h1>
-                    <p className="text-muted-foreground text-lg line-clamp-2">
-                      {product.description}
-                    </p>
+                    <p className="text-muted-foreground text-lg line-clamp-2">{product.description}</p>
                     <p className="font-bold">${product.price}</p>
                   </CardContent>
                 </Card>
